@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { InventoryItem, CalculatedItem, Category } from '../types';
 import { CATEGORY_COLORS } from '../constants';
-import { Layers, Trash2, Plus, X, Search, Settings, Check, ArrowLeft, CloudDownload, Globe, Edit3, List, Lock } from 'lucide-react';
+import { Layers, Trash2, Plus, X, Search, Settings, Check, ArrowLeft, CloudDownload, Globe, Edit3, List, Lock, PlusCircle } from 'lucide-react';
 
 interface InventoryTableProps {
   items: InventoryItem[];
@@ -190,6 +190,18 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({
     setBulkValue('');
   };
 
+  const handleOpenAddModal = (preSelectedCategory?: string) => {
+    setNewItem({
+        code: '',
+        name: '',
+        category: preSelectedCategory || availableCategories[0] || Category.SODA,
+        unit: 'un',
+        costPrice: '',
+        sellPrice: ''
+    });
+    setIsAddModalOpen(true);
+  };
+
   const handleSaveNewItem = () => {
     if (!newItem.name) return alert('Nome é obrigatório');
     
@@ -245,7 +257,7 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({
             {(searchQuery || filterCategory) && <button onClick={() => {setSearchQuery(''); setFilterCategory('')}} className="text-slate-400 hover:text-white"><X size={18}/></button>}
          </div>
          <div className="flex gap-2">
-            <button onClick={() => setIsAddModalOpen(true)} className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+            <button onClick={() => handleOpenAddModal()} className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
                <Plus size={16} /> Novo Produto
             </button>
             <button onClick={onOpenIntegration} className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
@@ -341,6 +353,13 @@ export const InventoryTable: React.FC<InventoryTableProps> = ({
                          </td>
                          <td colSpan={colSpan} className="px-3 py-1.5 font-bold text-xs uppercase flex items-center gap-2" style={{ color: catColor }}>
                             <Layers size={12} /> {category}
+                            <button 
+                                onClick={() => handleOpenAddModal(category)}
+                                className="ml-2 p-1 hover:bg-slate-800 rounded-full text-slate-500 hover:text-white transition-colors"
+                                title={`Adicionar produto em ${category}`}
+                            >
+                                <PlusCircle size={14} />
+                            </button>
                          </td>
                       </tr>
                       {catItems.map(item => {
